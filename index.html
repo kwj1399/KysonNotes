@@ -268,6 +268,136 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/06/Ceph常用操作命令/" itemprop="url">
+                  Ceph常用操作命令
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T21:58:12+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/Ceph常用操作命令/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/Ceph常用操作命令/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>记录个人最近在用的ceph操作命令<br>持续更新…  </p>
+<hr>
+<p><strong>删除osd</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1）ceph osd crush reweight osd.x 0.0  </div><div class="line">... 等待平衡结束....  </div><div class="line">2）ceph osd out osd.x  </div><div class="line">3）service ceph stop osd.x  </div><div class="line">4）ceph osd crush remove osd.x  </div><div class="line">5）ceph auth del osd.x  </div><div class="line">6）ceph osd rm osd.X</div></pre></td></tr></table></figure></p>
+<p><strong>导出crush map</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ceph osd getcrushmap -o /tmp/crushmap.txt</div><div class="line">crushtool -d /tmp/crushmap.txt -o /tmp/crushmap-decompile</div></pre></td></tr></table></figure></p>
+<p><strong>查看osd的ip</strong> <code>ceph osd dump</code> </p>
+<p><strong>创建了一个rbd卷，想删除的时候总是报错一直被占用，想知道卷被谁占用了？</strong></p>
+<p>首先查看卷的相关信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ rbd info testjevon/foo  </div><div class="line">rbd image &apos;foo&apos;:  </div><div class="line">    size 10240 MB in 2560 objects  </div><div class="line">    order 22 (4096 kB objects)  </div><div class="line">    block_name_prefix: rb.0.5aec5.238e1f29  </div><div class="line">    format: 1</div></pre></td></tr></table></figure></p>
+<p>接着，找出卷的header，<code>rados -p testjevon ls|grep foo.rbd</code><br>最后，查找谁map了卷，<code>rados -p testjevon listwatchers foo.rbd</code>  </p>
+<p><strong>pg活动在哪些OSD：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ceph pg dump |  awk &apos;&#123;print $1,$10,$15,$16,$17,$18&#125;&apos;</div><div class="line">ceph pg dump pgs|grep ^1|awk &apos;&#123;print $1,$2,$15&#125;&apos;</div></pre></td></tr></table></figure></p>
+<p><strong>删除pool中的对象</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rados rm -p &#123;pool-name&#125; &#123;object-name&#125;  </div><div class="line">批量：for ((i=1;i&lt;50;i++)); do rados rm -p .rgw.buckets.index .dir.default.14111.$i; done</div><div class="line">rgw bucket待删除对象：</div><div class="line">radosgw-admin gc list --include-all</div><div class="line">rgw bucket 查看删除时间设定</div><div class="line">ceph --admin-daemon /var/run/ceph/ceph-mon.mon.asok config show | grep gc</div></pre></td></tr></table></figure></p>
+<p><strong>查看osd.x作为primary个数</strong><br><code>ceph pg dump | grep active+clean | egrep &quot;,0\]&quot; | wc -l</code></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/06/Ceph修改日志路径/" itemprop="url">
                   Ceph修改日志路径
                 </a>
@@ -567,7 +697,7 @@ $ start ceph-osd id=&lt;osd num&gt;
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

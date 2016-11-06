@@ -96,40 +96,22 @@
 
 
 
-<meta name="description" content="概述实验测试阶段，只是想测试多余内存作为ceph日志盘对读写速度的改善情况。
-修改ceph日志路径ubuntu 14.04+ceph hammer 0.94.2  
-### Stop osd
-$ stop ceph-osd id=&amp;lt;osd num&amp;gt;
+<meta name="description" content="记录个人最近在用的ceph操作命令持续更新…  
 
-### Flush Journal
-$ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
-
-###">
+删除osd12345671）ceph osd crush reweight osd.x 0.0  ... 等待平衡结束....  2）ceph osd out osd.x  3）service ceph stop osd.x  4）ceph osd crush remove osd.x  5）ceph auth del osd.x  6）ceph">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ceph修改日志路径">
-<meta property="og:url" content="http://yoursite.com/2016/11/06/Ceph修改日志路径/index.html">
+<meta property="og:title" content="Ceph常用操作命令">
+<meta property="og:url" content="http://yoursite.com/2016/11/06/Ceph常用操作命令/index.html">
 <meta property="og:site_name" content="Kyson's Notes">
-<meta property="og:description" content="概述实验测试阶段，只是想测试多余内存作为ceph日志盘对读写速度的改善情况。
-修改ceph日志路径ubuntu 14.04+ceph hammer 0.94.2  
-### Stop osd
-$ stop ceph-osd id=&amp;lt;osd num&amp;gt;
+<meta property="og:description" content="记录个人最近在用的ceph操作命令持续更新…  
 
-### Flush Journal
-$ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
-
-###">
-<meta property="og:updated_time" content="2016-11-06T13:10:36.275Z">
+删除osd12345671）ceph osd crush reweight osd.x 0.0  ... 等待平衡结束....  2）ceph osd out osd.x  3）service ceph stop osd.x  4）ceph osd crush remove osd.x  5）ceph auth del osd.x  6）ceph">
+<meta property="og:updated_time" content="2016-11-06T14:21:54.812Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ceph修改日志路径">
-<meta name="twitter:description" content="概述实验测试阶段，只是想测试多余内存作为ceph日志盘对读写速度的改善情况。
-修改ceph日志路径ubuntu 14.04+ceph hammer 0.94.2  
-### Stop osd
-$ stop ceph-osd id=&amp;lt;osd num&amp;gt;
+<meta name="twitter:title" content="Ceph常用操作命令">
+<meta name="twitter:description" content="记录个人最近在用的ceph操作命令持续更新…  
 
-### Flush Journal
-$ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
-
-###">
+删除osd12345671）ceph osd crush reweight osd.x 0.0  ... 等待平衡结束....  2）ceph osd out osd.x  3）service ceph stop osd.x  4）ceph osd crush remove osd.x  5）ceph auth del osd.x  6）ceph">
 
 
 
@@ -150,10 +132,10 @@ $ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/11/06/Ceph修改日志路径/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/11/06/Ceph常用操作命令/"/>
 
 
-  <title> Ceph修改日志路径 | Kyson's Notes </title>
+  <title> Ceph常用操作命令 | Kyson's Notes </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -293,7 +275,7 @@ $ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
             
             
               
-                Ceph修改日志路径
+                Ceph常用操作命令
               
             
           </h1>
@@ -305,7 +287,7 @@ $ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-06T16:28:32+08:00" content="2016-11-06">
+            <time itemprop="dateCreated" datetime="2016-11-06T21:58:12+08:00" content="2016-11-06">
               2016-11-06
             </time>
           </span>
@@ -335,8 +317,8 @@ $ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/11/06/Ceph修改日志路径/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/Ceph修改日志路径/" itemprop="commentsCount"></span>
+                <a href="/2016/11/06/Ceph常用操作命令/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/Ceph常用操作命令/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -364,30 +346,17 @@ $ ceph-osd --flush-journal -i &amp;lt;osd num&amp;gt;
       
 
       
-        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>实验测试阶段，只是想测试多余内存作为ceph日志盘对读写速度的改善情况。</p>
-<h1 id="修改ceph日志路径"><a href="#修改ceph日志路径" class="headerlink" title="修改ceph日志路径"></a>修改ceph日志路径</h1><p>ubuntu 14.04+ceph hammer 0.94.2  </p>
-<pre><code>### Stop osd
-$ stop ceph-osd id=&lt;osd num&gt;
-
-### Flush Journal
-$ ceph-osd --flush-journal -i &lt;osd num&gt;
-
-### Create symlink to partition
-$ rm /var/lib/ceph/osd/ceph-&lt;osd num&gt;/journal
-$ ln -s /dev/ram0 /var/lib/ceph/osd/ceph-&lt;osd num&gt;/journal
-
-### Create new journal
-$ ceph-osd --mkjournal -i &lt;osd num&gt;
-$ start ceph-osd id=&lt;osd num&gt;
-</code></pre><p>这个方案osd服务可以正常启动</p>
-<h1 id="不成功案例"><a href="#不成功案例" class="headerlink" title="不成功案例"></a>不成功案例</h1><ul>
-<li>选择在/run/shm使用dd创建一块设备然后挂载到ceph存储的日志路径上，osd无法启动。</li>
-<li>使用tmpfs，然后把/mnt/ramdisk <code>ln -s</code>到日志路径会导致osd无法启动。<br><code>mount -t tmpfs tmpfs /mnt/ramdisk  -o size=2G,defaults,noatime,mode=777</code>  </li>
-</ul>
-<p>错误日志：</p>
-<blockquote>
-<p>2016-11-05 10:11:19.813628 7f6f54d9d900  0 ceph version 0.94.2(5fb85614ca8f354284c713a2f9c610860720bbf3), process ceph-osd, pid 3487<br>2016-11-05 10:11:19.828706 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) backend generic (magic 0xef53)<br>2016-11-05 10:11:19.829544 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: FIEMAP ioctl is supported and appears to work<br>2016-11-05 10:11:19.829553 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: FIEMAP ioctl is disabled via ‘filestore fiemap’ config option<br>2016-11-05 10:11:19.853807 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: syncfs(2) syscall fully supported (by glibc and kernel)<br>2016-11-05 10:11:19.855109 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) limited size xattrs<br>2016-11-05 10:11:19.858255 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) mount: enabling WRITEAHEAD journal mode: checkpoint is not enabled<br>2016-11-05 10:11:19.859704 7f6f54d9d900 -1 journal FileJournal::_open: disabling aio for non-block journal.  Use journal_force_aio to force use of aio anyway<br>2016-11-05 10:11:19.859714 7f6f54d9d900  1 journal _open /var/lib/ceph/osd/ceph-7/journal fd 19: 10737418240 bytes, block size 4096 bytes, directio = 1, aio = 0<br>2016-11-05 10:11:19.859756 7f6f54d9d900 -1 journal FileJournal::open: ondisk fsid 00000000-0000-0000-0000-000000000000 doesn’t match expected 54de23c7-9a5f-4f30-8568-bc0354a6d788, invalid (someone else’s?) journal<br>2016-11-05 10:11:19.859822 7f6f54d9d900 -1 filestore(/var/lib/ceph/osd/ceph-7) mount failed to open journal /var/lib/ceph/osd/ceph-7/journal: (22) Invalid argument<br>2016-11-05 10:11:19.869951 7f6f54d9d900 -1 osd.7 0 OSD:init: unable to mount object store<br>2016-11-05 10:11:19.869970 7f6f54d9d900 -1  ** ERROR: osd init failed: (22) Invalid argument</p>
-</blockquote>
+        <p>记录个人最近在用的ceph操作命令<br>持续更新…  </p>
+<hr>
+<p><strong>删除osd</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1）ceph osd crush reweight osd.x 0.0  </div><div class="line">... 等待平衡结束....  </div><div class="line">2）ceph osd out osd.x  </div><div class="line">3）service ceph stop osd.x  </div><div class="line">4）ceph osd crush remove osd.x  </div><div class="line">5）ceph auth del osd.x  </div><div class="line">6）ceph osd rm osd.X</div></pre></td></tr></table></figure></p>
+<p><strong>导出crush map</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ceph osd getcrushmap -o /tmp/crushmap.txt</div><div class="line">crushtool -d /tmp/crushmap.txt -o /tmp/crushmap-decompile</div></pre></td></tr></table></figure></p>
+<p><strong>查看osd的ip</strong> <code>ceph osd dump</code> </p>
+<p><strong>创建了一个rbd卷，想删除的时候总是报错一直被占用，想知道卷被谁占用了？</strong></p>
+<p>首先查看卷的相关信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ rbd info testjevon/foo  </div><div class="line">rbd image &apos;foo&apos;:  </div><div class="line">    size 10240 MB in 2560 objects  </div><div class="line">    order 22 (4096 kB objects)  </div><div class="line">    block_name_prefix: rb.0.5aec5.238e1f29  </div><div class="line">    format: 1</div></pre></td></tr></table></figure></p>
+<p>接着，找出卷的header，<code>rados -p testjevon ls|grep foo.rbd</code><br>最后，查找谁map了卷，<code>rados -p testjevon listwatchers foo.rbd</code>  </p>
+<p><strong>pg活动在哪些OSD：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ceph pg dump |  awk &apos;&#123;print $1,$10,$15,$16,$17,$18&#125;&apos;</div><div class="line">ceph pg dump pgs|grep ^1|awk &apos;&#123;print $1,$2,$15&#125;&apos;</div></pre></td></tr></table></figure></p>
+<p><strong>删除pool中的对象</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rados rm -p &#123;pool-name&#125; &#123;object-name&#125;  </div><div class="line">批量：for ((i=1;i&lt;50;i++)); do rados rm -p .rgw.buckets.index .dir.default.14111.$i; done</div><div class="line">rgw bucket待删除对象：</div><div class="line">radosgw-admin gc list --include-all</div><div class="line">rgw bucket 查看删除时间设定</div><div class="line">ceph --admin-daemon /var/run/ceph/ceph-mon.mon.asok config show | grep gc</div></pre></td></tr></table></figure></p>
+<p><strong>查看osd.x作为primary个数</strong><br><code>ceph pg dump | grep active+clean | egrep &quot;,0\]&quot; | wc -l</code></p>
 
       
     </div>
@@ -440,17 +409,13 @@ $ start ceph-osd id=&lt;osd num&gt;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/11/06/Hexo-NexT-GitHub记录/" rel="next" title="Hexo-NexT-GitHub记录">
-                <i class="fa fa-chevron-left"></i> Hexo-NexT-GitHub记录
+              <a href="/2016/11/06/Ceph修改日志路径/" rel="next" title="Ceph修改日志路径">
+                <i class="fa fa-chevron-left"></i> Ceph修改日志路径
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/06/Ceph常用操作命令/" rel="prev" title="Ceph常用操作命令">
-                Ceph常用操作命令 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -476,8 +441,8 @@ $ start ceph-osd id=&lt;osd num&gt;
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/11/06/Ceph修改日志路径/"
-           data-title="Ceph修改日志路径" data-url="http://yoursite.com/2016/11/06/Ceph修改日志路径/">
+      <div class="ds-thread" data-thread-key="2016/11/06/Ceph常用操作命令/"
+           data-title="Ceph常用操作命令" data-url="http://yoursite.com/2016/11/06/Ceph常用操作命令/">
       </div>
     
   </div>
@@ -588,7 +553,7 @@ $ start ceph-osd id=&lt;osd num&gt;
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改ceph日志路径"><span class="nav-number">2.</span> <span class="nav-text">修改ceph日志路径</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不成功案例"><span class="nav-number">3.</span> <span class="nav-text">不成功案例</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
         </section>
