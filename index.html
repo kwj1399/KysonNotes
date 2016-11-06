@@ -268,6 +268,149 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/06/Ceph修改日志路径/" itemprop="url">
+                  Ceph修改日志路径
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T16:28:32+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/Ceph修改日志路径/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/Ceph修改日志路径/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>实验测试阶段，只是想测试多余内存作为ceph日志盘对读写速度的改善情况。</p>
+<h1 id="修改ceph日志路径"><a href="#修改ceph日志路径" class="headerlink" title="修改ceph日志路径"></a>修改ceph日志路径</h1><p>ubuntu 14.04+ceph hammer 0.94.2  </p>
+<pre><code>### Stop osd
+$ stop ceph-osd id=&lt;osd num&gt;
+
+### Flush Journal
+$ ceph-osd --flush-journal -i &lt;osd num&gt;
+
+### Create symlink to partition
+$ rm /var/lib/ceph/osd/ceph-&lt;osd num&gt;/journal
+$ ln -s /dev/ram0 /var/lib/ceph/osd/ceph-&lt;osd num&gt;/journal
+
+### Create new journal
+$ ceph-osd --mkjournal -i &lt;osd num&gt;
+$ start ceph-osd id=&lt;osd num&gt;
+</code></pre><p>这个方案osd服务可以正常启动</p>
+<h1 id="不成功案例"><a href="#不成功案例" class="headerlink" title="不成功案例"></a>不成功案例</h1><ul>
+<li>选择在/run/shm使用dd创建一块设备然后挂载到ceph存储的日志路径上，osd无法启动。</li>
+<li>使用tmpfs，然后把/mnt/ramdisk <code>ln -s</code>到日志路径会导致osd无法启动。<br><code>mount -t tmpfs tmpfs /mnt/ramdisk  -o size=2G,defaults,noatime,mode=777</code>  </li>
+</ul>
+<p>错误日志：</p>
+<blockquote>
+<p>2016-11-05 10:11:19.813628 7f6f54d9d900  0 ceph version 0.94.2(5fb85614ca8f354284c713a2f9c610860720bbf3), process ceph-osd, pid 3487<br>2016-11-05 10:11:19.828706 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) backend generic (magic 0xef53)<br>2016-11-05 10:11:19.829544 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: FIEMAP ioctl is supported and appears to work<br>2016-11-05 10:11:19.829553 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: FIEMAP ioctl is disabled via ‘filestore fiemap’ config option<br>2016-11-05 10:11:19.853807 7f6f54d9d900  0 genericfilestorebackend(/var/lib/ceph/osd/ceph-7) detect_features: syncfs(2) syscall fully supported (by glibc and kernel)<br>2016-11-05 10:11:19.855109 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) limited size xattrs<br>2016-11-05 10:11:19.858255 7f6f54d9d900  0 filestore(/var/lib/ceph/osd/ceph-7) mount: enabling WRITEAHEAD journal mode: checkpoint is not enabled<br>2016-11-05 10:11:19.859704 7f6f54d9d900 -1 journal FileJournal::_open: disabling aio for non-block journal.  Use journal_force_aio to force use of aio anyway<br>2016-11-05 10:11:19.859714 7f6f54d9d900  1 journal _open /var/lib/ceph/osd/ceph-7/journal fd 19: 10737418240 bytes, block size 4096 bytes, directio = 1, aio = 0<br>2016-11-05 10:11:19.859756 7f6f54d9d900 -1 journal FileJournal::open: ondisk fsid 00000000-0000-0000-0000-000000000000 doesn’t match expected 54de23c7-9a5f-4f30-8568-bc0354a6d788, invalid (someone else’s?) journal<br>2016-11-05 10:11:19.859822 7f6f54d9d900 -1 filestore(/var/lib/ceph/osd/ceph-7) mount failed to open journal /var/lib/ceph/osd/ceph-7/journal: (22) Invalid argument<br>2016-11-05 10:11:19.869951 7f6f54d9d900 -1 osd.7 0 OSD:init: unable to mount object store<br>2016-11-05 10:11:19.869970 7f6f54d9d900 -1  ** ERROR: osd init failed: (22) Invalid argument</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/06/Hexo-NexT-GitHub记录/" itemprop="url">
                   Hexo-NexT-GitHub记录
                 </a>
@@ -346,6 +489,11 @@
 <p>版本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">C:\Users\kyson&gt;hexo -v</div><div class="line">hexo-cli: 1.0.2</div><div class="line">os: Windows_NT 10.0.10586 win32 x64</div><div class="line">http_parser: 2.7.0</div><div class="line">node: 6.9.1</div><div class="line">v8: 5.1.281.84</div><div class="line">uv: 1.9.1</div><div class="line">zlib: 1.2.8</div><div class="line">ares: 1.10.1-DEV</div><div class="line">icu: 57.1</div><div class="line">modules: 48</div><div class="line">openssl: 1.0.2j</div></pre></td></tr></table></figure></p>
 <h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><p>安装hexo-deploy-git部署到github上的时候,出现错误。<br><strong>官方_config.yml配置：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: &lt;repository url&gt;</div><div class="line">  branch: [branch]</div><div class="line">  message: [message]</div></pre></td></tr></table></figure></p>
 <p><strong>修改后：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">deploy:  </div><div class="line">  type: git</div><div class="line">  repository: &lt;repository url&gt;</div><div class="line">  branch: [branch]</div><div class="line">  message: [message]</div></pre></td></tr></table></figure></p>
+<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><ul>
+<li>一个GitHub账号对应一个用户或者一个组织，GitHub会给这个用户分配一个域名：username.github.io，当用户访问这个域名时，GitHub会去解析username用户下，username.github.io项目的master分支。</li>
+<li>GitHub还为每个项目提供了域名，例如，你有一个项目名为blog， GitHub为这个项目提供的域名为username.github.io/blog，当你访问这个域名时，GitHub会去解析username用户下，blog项目的gh-pages 分支。  </li>
+</ul>
+<p>所以，要搭建自己的博客，你可以选择建立名为username.github.io的项目， 在master分支下存放网站源代码，也可以选择建立名为 blog 的项目，在 gh-pages分支下存放网站源代码。</p>
 <h1 id="Makedown-amp-Hexo"><a href="#Makedown-amp-Hexo" class="headerlink" title="Makedown&amp;Hexo"></a>Makedown&amp;Hexo</h1><ul>
 <li>markdown标题标准写法写法需要在”#”和后面字符之间加一个空格,否则Hexo无法解析。</li>
 <li>代码块用三个反单引号<em>```</em>包裹，一个反单引号会导致代码挤在一行。</li>
@@ -419,7 +567,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -436,7 +584,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
