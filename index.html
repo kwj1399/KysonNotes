@@ -268,6 +268,166 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/17/Parted分区对齐/" itemprop="url">
+                  Parted分区对齐
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-17T13:57:10+08:00" content="2016-11-17">
+              2016-11-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/17/Parted分区对齐/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/17/Parted分区对齐/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在对大于2TB磁盘进行分区的时候总是提示：</p>
+<blockquote>
+<p>Warning: The resulting partition is not properly aligned for best performance.  </p>
+</blockquote>
+<p>这个警告是分区没有对齐的问题，可以检查一下是否对齐  </p>
+<pre><code>(parted) align-check optimal 1                                   
+1 not aligned
+</code></pre><p>解决办法：  </p>
+<pre><code>(parted) mkpart primary  0% x
+</code></pre><p>x代表分区结束的大小，可以是百分比也可以是具体的字节  </p>
+<hr>
+<p>附上分区的shell脚本:  </p>
+<pre><code>
+#! /bin/sh
+DEVICE=$1
+BOOT_SIZE=&quot;1000&quot;
+ROOTFS_SIZE=&quot;21000&quot;
+CEPH_DATA_SIZE=&quot;31000&quot;
+PETASAN_DATA_SIZE=&quot;50000&quot;
+
+SLEEP_SEC=3
+
+
+echo Formatting $DEVICE
+
+dd if=/dev/zero of=$DEVICE  bs=1k count=1
+sync
+sleep $SLEEP_SEC
+
+
+#parted $DEVICE  &lt;&lt; EOF &gt;/dev/null 2&gt;&amp;1
+parted $DEVICE  &lt;&lt; EOF
+
+mklabel gpt 
+mkpart primary 0% $BOOT_SIZE
+mkpart primary $BOOT_SIZE $ROOTFS_SIZE
+mkpart primary $ROOTFS_SIZE $CEPH_DATA_SIZE
+mkpart primary $CEPH_DATA_SIZE $PETASAN_DATA_SIZE
+quit
+EOF
+echo Formatting complete
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/06/Ceph常用操作命令/" itemprop="url">
                   Ceph常用操作命令
                 </a>
@@ -697,7 +857,7 @@ $ start ceph-osd id=&lt;osd num&gt;
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

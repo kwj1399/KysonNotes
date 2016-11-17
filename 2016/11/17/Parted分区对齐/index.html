@@ -80,7 +80,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="ceph," />
 
 
 
@@ -96,12 +96,34 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Kyson's Notes">
-<meta property="og:url" content="http://yoursite.com/archives/2016/11/index.html">
+<meta name="description" content="在对大于2TB磁盘进行分区的时候总是提示：
+
+Warning: The resulting partition is not properly aligned for best performance.  
+
+这个警告是分区没有对齐的问题，可以检查一下是否对齐  
+(parted) align-check optimal 1                                   
+1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parted分区对齐">
+<meta property="og:url" content="http://yoursite.com/2016/11/17/Parted分区对齐/index.html">
 <meta property="og:site_name" content="Kyson's Notes">
+<meta property="og:description" content="在对大于2TB磁盘进行分区的时候总是提示：
+
+Warning: The resulting partition is not properly aligned for best performance.  
+
+这个警告是分区没有对齐的问题，可以检查一下是否对齐  
+(parted) align-check optimal 1                                   
+1">
+<meta property="og:updated_time" content="2016-11-17T06:19:27.222Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kyson's Notes">
+<meta name="twitter:title" content="Parted分区对齐">
+<meta name="twitter:description" content="在对大于2TB磁盘进行分区的时候总是提示：
+
+Warning: The resulting partition is not properly aligned for best performance.  
+
+这个警告是分区没有对齐的问题，可以检查一下是否对齐  
+(parted) align-check optimal 1                                   
+1">
 
 
 
@@ -122,10 +144,10 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2016/11/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/11/17/Parted分区对齐/"/>
 
 
-  <title> 归档 | Kyson's Notes </title>
+  <title> Parted分区对齐 | Kyson's Notes </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -146,7 +168,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  page-archive  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
@@ -244,177 +266,214 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 4 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
 
-      
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Parted分区对齐
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-17T13:57:10+08:00" content="2016-11-17">
+              2016-11-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/17/Parted分区对齐/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/17/Parted分区对齐/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv">阅读
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
       
       
 
       
+        <p>在对大于2TB磁盘进行分区的时候总是提示：</p>
+<blockquote>
+<p>Warning: The resulting partition is not properly aligned for best performance.  </p>
+</blockquote>
+<p>这个警告是分区没有对齐的问题，可以检查一下是否对齐  </p>
+<pre><code>(parted) align-check optimal 1                                   
+1 not aligned
+</code></pre><p>解决办法：  </p>
+<pre><code>(parted) mkpart primary  0% x
+</code></pre><p>x代表分区结束的大小，可以是百分比也可以是具体的字节  </p>
+<hr>
+<p>附上分区的shell脚本:  </p>
+<pre><code>
+#! /bin/sh
+DEVICE=$1
+BOOT_SIZE=&quot;1000&quot;
+ROOTFS_SIZE=&quot;21000&quot;
+CEPH_DATA_SIZE=&quot;31000&quot;
+PETASAN_DATA_SIZE=&quot;50000&quot;
+
+SLEEP_SEC=3
+
+
+echo Formatting $DEVICE
+
+dd if=/dev/zero of=$DEVICE  bs=1k count=1
+sync
+sleep $SLEEP_SEC
+
+
+#parted $DEVICE  &lt;&lt; EOF &gt;/dev/null 2&gt;&amp;1
+parted $DEVICE  &lt;&lt; EOF
+
+mklabel gpt 
+mkpart primary 0% $BOOT_SIZE
+mkpart primary $BOOT_SIZE $ROOTFS_SIZE
+mkpart primary $ROOTFS_SIZE $CEPH_DATA_SIZE
+mkpart primary $CEPH_DATA_SIZE $PETASAN_DATA_SIZE
+quit
+EOF
+echo Formatting complete
+</code></pre>
+      
+    </div>
+
+    <div>
+      
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2016">2016</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat.png" alt="Kyson WeChat Pay"/>
+          <p>微信打赏</p>
         </div>
       
       
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.png" alt="Kyson Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
 
       
+    </div>
 
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag">#ceph</a>
+          
+        </div>
+      
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/17/Parted分区对齐/" itemprop="url">
-              
-                <span itemprop="name">Parted分区对齐</span>
-              
-            </a>
-        
-      </h1>
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/06/Ceph常用操作命令/" rel="next" title="Ceph常用操作命令">
+                <i class="fa fa-chevron-left"></i> Ceph常用操作命令
+              </a>
+            
+          </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-11-17T13:57:10+08:00"
-              content="2016-11-17" >
-          11-17
-        </time>
-      </div>
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
 
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
+    <div class="post-spread">
       
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/06/Ceph常用操作命令/" itemprop="url">
-              
-                <span itemprop="name">Ceph常用操作命令</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-11-06T21:58:12+08:00"
-              content="2016-11-06" >
-          11-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/06/Ceph修改日志路径/" itemprop="url">
-              
-                <span itemprop="name">Ceph修改日志路径</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-11-06T16:28:32+08:00"
-              content="2016-11-06" >
-          11-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/06/Hexo-NexT-GitHub记录/" itemprop="url">
-              
-                <span itemprop="name">Hexo-NexT-GitHub记录</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-11-06T12:39:16+08:00"
-              content="2016-11-06" >
-          11-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
-
-  
-
+    </div>
+  </div>
 
 
           </div>
@@ -422,6 +481,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/17/Parted分区对齐/"
+           data-title="Parted分区对齐" data-url="http://yoursite.com/2016/11/17/Parted分区对齐/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -441,8 +508,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -512,6 +588,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -631,11 +718,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
 
 
   
